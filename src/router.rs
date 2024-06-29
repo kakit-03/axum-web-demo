@@ -5,7 +5,8 @@ use crate::service;
 pub fn init() -> axum::Router {
     axum::Router::new()
         .route("/site", get(service::site::index))
-        .route("/site/add", post(service::site::add)).layer(middleware::from_fn(auth::kakit_authorization_middleware))
+        .route("/site/add", post(service::site::add))
+        .route("/coco/edit", post(service::site::update_by_id)).layer(middleware::from_fn(auth::kakit_authorization_middleware))
         .route("/", get(|| async {}))
         .route("/signin", post(auth::sign_in))
     // .route(

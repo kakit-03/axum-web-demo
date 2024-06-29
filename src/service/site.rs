@@ -74,3 +74,27 @@ pub async fn add(
         .map_err(log_error(handler_name))?;
     Ok(success("".to_string()))
 }
+
+pub async fn update_by_id(
+    Extension(state): Extension<Arc<AppState>>,
+    JsonOrForm(params): JsonOrForm<SiteParams>,
+) -> Result<Json<ApiResponse<String>>, AppError> {
+    let handler_name = "article/edit";
+    let conn = get_conn(&state);
+    let site_ac_model: Option<JyMainSite::Model> = JyMainSite::Entity::find_by_id(params.id.unwrap())
+        .one(conn)
+        .await.map_err(AppError::from)
+        .map_err(log_error(handler_name))?;
+    let mut u_model: JyMainSite::ActiveModel = match site_ac_model {
+        Some(s) => s.into(),
+        None => {
+            return Err(AppError::notfound())
+        }
+    };
+    u_model.name = Set(params.name.unwrap().to_owned());
+    u_model.images = Set(Option::from(params.images.unwrap()).to_owned());
+    u_model.rc_config = Set(Option::from(params.rc_config.unwrap()).to_owned());
+    u_model.update(conn).await.map_err(AppError::from).map_err(log_error(handler_name))?;
+    Ok(success("".to_string()))
+    // Ok(success(params))
+}
