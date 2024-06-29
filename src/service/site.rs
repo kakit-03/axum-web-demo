@@ -56,19 +56,21 @@ pub async fn index(
 pub async fn add(
     Extension(state): Extension<Arc<AppState>>,
     JsonOrForm(params): JsonOrForm<SiteParams>,
-) -> Result<Json<ApiResponse<SiteParams>>, AppError> {
-     // let handler_name = "article/add";
-    // let conn = get_conn(&state);
-    // JyMainSite::ActiveModel {
-    //     id: NotSet,
-    //     merchant_id: Set(params.merchant_id.unwrap()),
-    //     category_id: Set(frm.category_id),
-    //     content: Set(frm.content),
-    //     ..Default::default()
-    // }
-    // .save(conn)
-    // .await
-    // .map_err(AppError::from)
-    // .map_err(log_error(handler_name))?;
-    Ok(success(params))
+) -> Result<Json<ApiResponse<String>>, AppError> {
+    let handler_name = "article/add";
+    let conn = get_conn(&state);
+    JyMainSite::ActiveModel {
+        id: NotSet,
+        merchant_id: Set(params.merchant_id.unwrap()),
+        store_id: Set(params.store_id.unwrap()),
+        name: Set(params.name.unwrap()),
+        images: Set(Option::from(params.images.unwrap())),
+        rc_config: Set(Option::from(params.rc_config.unwrap())),
+        ..Default::default()
+    }
+        .save(conn)
+        .await
+        .map_err(AppError::from)
+        .map_err(log_error(handler_name))?;
+    Ok(success("".to_string()))
 }
