@@ -74,7 +74,7 @@ pub async fn add(
         .map_err(log_error(handler_name))?;
     Ok(success("".to_string()))
 }
-
+1
 pub async fn update_by_id(
     Extension(state): Extension<Arc<AppState>>,
     JsonOrForm(params): JsonOrForm<SiteParams>,
