@@ -14,6 +14,7 @@ use crate::{state::AppState, AppError, Result, err, AppErrorType};
 use crate::err::AppErrorItem;
 
 pub mod site;
+pub mod store;
 
 
 type HtmlRespon = Html<String>;
