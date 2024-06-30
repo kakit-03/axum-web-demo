@@ -48,6 +48,9 @@ impl AppError {
     pub fn notfound() -> Self {
         Self::from_msg("不存在的记录", AppErrorType::Notfound)
     }
+    pub fn route_not_found() -> Self {
+        Self::from_msg("路由不存在", AppErrorType::Notfound)
+    }
 }
 
 impl std::fmt::Display for AppError {

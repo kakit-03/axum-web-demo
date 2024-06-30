@@ -1,7 +1,9 @@
 use axum::middleware;
+use axum::response::IntoResponse;
 use axum::routing::{get, post};
+use axum::http::StatusCode;
 use crate::middleware::auth;
-use crate::service;
+use crate::{AppError, service};
 pub fn init() -> axum::Router {
     axum::Router::new()
         .route("/site", get(service::site::index))
@@ -10,6 +12,7 @@ pub fn init() -> axum::Router {
         .route("/site/edit", post(service::site::update_by_id)).layer(middleware::from_fn(auth::kakit_authorization_middleware))
         .route("/", get(|| async {}))
         .route("/signin", post(auth::sign_in))
+        .fallback(handler_404)
     // .route(
     //     "/category/add",
     //     get(handler::category::add_ui).post(handler::category::add),
@@ -27,4 +30,7 @@ pub fn init() -> axum::Router {
     //     get(handler::site::add_ui).post(handler::site::add),
     // )
     // .route("/article/tags", get(handler::site::list_with_tags))
+}
+async fn handler_404() -> impl IntoResponse {
+    (StatusCode::NOT_FOUND, AppError::route_not_found())
 }
