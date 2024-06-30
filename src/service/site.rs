@@ -41,8 +41,11 @@ pub async fn index(
     let offset = page_size * (page - 1);
     let list = selc
         .order_by_desc(JyMainSite::Column::Id)
+        // .select_only()
+        // .columns([JyMainSite::Column::Id, JyMainSite::Column::MerchantId])
         .limit(page_size as u64)
         .offset(offset as u64)
+        // .into_json()
         .into_model::<List>()
         .all(conn)
         .await
@@ -56,19 +59,21 @@ pub async fn index(
         total: record_total,
     }))
 }
+
 pub async fn detail(
     Extension(state): Extension<Arc<AppState>>,
     Path(id): Path<i32>,
 ) -> Result<Json<ApiResponse<Detail>>, AppError> {
-let handler_name = "site/detail";
+    let handler_name = "site/detail";
     let conn = get_conn(&state);
-    let site_vo= JyMainSite::Entity::find_by_id(id)
+    let site_vo = JyMainSite::Entity::find_by_id(id)
         .into_model::<Detail>()
         .one(conn)
         .await.map_err(AppError::from)
         .map_err(log_error(handler_name))?;
     Ok(success(site_vo.unwrap()))
 }
+
 pub async fn add(
     Extension(state): Extension<Arc<AppState>>,
     JsonOrForm(params): JsonOrForm<SiteParams>,
@@ -90,6 +95,7 @@ pub async fn add(
         .map_err(log_error(handler_name))?;
     Ok(success("".to_string()))
 }
+
 pub async fn update_by_id(
     Extension(state): Extension<Arc<AppState>>,
     JsonOrForm(params): JsonOrForm<SiteParams>,
