@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use axum::{Extension, extract::Query, Json};
+use axum::extract::Path;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, EntityTrait, NotSet, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect};
 use sea_orm::ActiveValue::Set;
 
@@ -11,8 +12,8 @@ use crate::{
 };
 use crate::dto::list::ListParams;
 use crate::dto::store::SiteParams;
-use crate::entity::jy_main_site::Model;
-use crate::vo::site::List;
+use crate::vo::site::{Detail, List};
+
 use super::{ApiResponse, get_conn, JsonOrForm, ListResponse, log_error, success};
 
 pub async fn index(
@@ -55,12 +56,24 @@ pub async fn index(
         total: record_total,
     }))
 }
-
+pub async fn detail(
+    Extension(state): Extension<Arc<AppState>>,
+    Path(id): Path<i32>,
+) -> Result<Json<ApiResponse<Detail>>, AppError> {
+let handler_name = "site/detail";
+    let conn = get_conn(&state);
+    let site_vo= JyMainSite::Entity::find_by_id(id)
+        .into_model::<Detail>()
+        .one(conn)
+        .await.map_err(AppError::from)
+        .map_err(log_error(handler_name))?;
+    Ok(success(site_vo.unwrap()))
+}
 pub async fn add(
     Extension(state): Extension<Arc<AppState>>,
     JsonOrForm(params): JsonOrForm<SiteParams>,
 ) -> Result<Json<ApiResponse<String>>, AppError> {
-    let handler_name = "article/add";
+    let handler_name = "site/add";
     let conn = get_conn(&state);
     JyMainSite::ActiveModel {
         id: NotSet,
@@ -81,7 +94,7 @@ pub async fn update_by_id(
     Extension(state): Extension<Arc<AppState>>,
     JsonOrForm(params): JsonOrForm<SiteParams>,
 ) -> Result<Json<ApiResponse<String>>, AppError> {
-    let handler_name = "article/edit";
+    let handler_name = "site/edit";
     let conn = get_conn(&state);
     let site_ac_model: Option<JyMainSite::Model> = JyMainSite::Entity::find_by_id(params.id.unwrap())
         .one(conn)
@@ -98,5 +111,4 @@ pub async fn update_by_id(
     u_model.rc_config = Set(Option::from(params.rc_config.unwrap()).to_owned());
     u_model.update(conn).await.map_err(AppError::from).map_err(log_error(handler_name))?;
     Ok(success("".to_string()))
-    // Ok(success(params))
 }
