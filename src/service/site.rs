@@ -11,13 +11,15 @@ use crate::{
 };
 use crate::dto::list::ListParams;
 use crate::dto::store::SiteParams;
+use crate::entity::jy_main_site::Model;
+use crate::vo::site::List;
 use super::{ApiResponse, get_conn, JsonOrForm, ListResponse, log_error, success};
 
 pub async fn index(
     Extension(state): Extension<Arc<AppState>>,
     Query(params): Query<ListParams>,
 ) -> Result<
-    Json<ApiResponse<ListResponse<Vec<JyMainSite::Model>>>>,
+    Json<ApiResponse<ListResponse<Vec<List>>>>,
     AppError
 > {
     let handler_name = "site/index";
@@ -40,6 +42,7 @@ pub async fn index(
         .order_by_desc(JyMainSite::Column::Id)
         .limit(page_size as u64)
         .offset(offset as u64)
+        .into_model::<List>()
         .all(conn)
         .await
         .map_err(AppError::from)
