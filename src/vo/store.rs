@@ -4,13 +4,14 @@ use sea_orm::prelude::Decimal;
 use serde_derive::Serialize;
 use serde_json::Value as Json;
 use crate::util::serialize_datetime;
-#[derive(Clone, Debug, Serialize,FromQueryResult)]
+#[derive(Clone, Debug, Serialize,FromQueryResult,Default)]
 pub struct Detail {
     pub id: i32,
     pub merchant_id: i32,
     pub user_id: i32,
     pub name: String,
     pub logo: String,
+    // pub site_list: Option<Vec<Json>>,
     pub images: Option<Json>,
     pub status: i8,
     pub latitude: Decimal,

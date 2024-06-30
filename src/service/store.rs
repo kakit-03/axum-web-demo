@@ -2,14 +2,13 @@ use std::sync::Arc;
 
 use axum::{Extension, Json};
 use axum::extract::{Path, Query};
-use sea_orm::{Condition, EntityTrait, JsonValue, Value};
-use serde_json::json;
+use sea_orm::{Condition, EntityTrait, JsonValue, ModelTrait};
 
 use crate::AppError;
 use crate::dto::list::ListParams;
 use crate::service::{ApiResponse, get_conn, ListResponse, log_error, success};
 use crate::state::AppState;
-use crate::vo::store::{Detail,List};
+use crate::vo::store::Detail;
 
 pub async fn detail(
     Extension(state): Extension<Arc<AppState>>,
