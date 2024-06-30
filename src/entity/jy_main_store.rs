@@ -31,6 +31,24 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+    #[sea_orm(has_many = "super::jy_main_site::Entity")]
+    SITE
+}
+// impl RelationTrait for Relation {
+//     fn def(&self) -> RelationDef {
+//         match self {
+//             Self::Cake => Entity::belongs_to(super::jy_main_site::Entity)
+//                 .from(Column::Id)
+//                 .to(super::jy_main_site::Column::StoreId)
+//                 .into(),
+//         }
+//     }
+// }
 
+impl Related<super::jy_main_site::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::SITE.def()
+    }
+}
 impl ActiveModelBehavior for ActiveModel {}
