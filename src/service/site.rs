@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use axum::{Extension, extract::Query, Json};
@@ -39,7 +40,7 @@ pub async fn index(
     let page = params.page.unwrap();
     let page_total = f64::ceil(record_total as f64 / page_size as f64) as usize;
     let offset = page_size * (page - 1);
-    let list = selc
+    let mut list = selc
         .order_by_desc(JyMainSite::Column::Id)
         // .select_only()
         // .columns([JyMainSite::Column::Id, JyMainSite::Column::MerchantId])
@@ -51,6 +52,24 @@ pub async fn index(
         .await
         .map_err(AppError::from)
         .map_err(log_error(handler_name))?;
+    let ids: Vec<i32> = list.iter().map(|item| item.store_id).collect();
+    let condition = Condition::all()
+        .add(crate::entity::jy_main_store::Column::Id.is_in(ids))
+        .add(crate::entity::jy_main_store::Column::IsDeleted.eq(0));
+    let store_list = crate::entity::jy_main_store::Entity::find().filter(condition)
+        .into_model::<crate::vo::store::Detail>()
+        .all(conn)
+        .await
+        .map_err(AppError::from)
+        .map_err(log_error(handler_name))?;
+    let store_map = store_list.iter().map(|detail| (detail.id.clone(), detail)).collect::<Vec<_>>();
+    let store_map: HashMap<_, _>  = store_map.into_iter().collect();
+    for list_item in &mut list {
+        if let Some(detail) = store_map.get(&list_item.store_id) {
+            // 赋值部分值给 List
+            list_item.store_name = Option::from((**detail).name.clone());
+        }
+    }
     Ok(success(ListResponse {
         list,
         page,
