@@ -21,6 +21,12 @@ serde_derive = "1.0.203"
 serde_json = "1.0"
 # 数据库orm
 sea-orm = { version = "0.12.15", features = ["runtime-tokio-native-tls", "sqlx-mysql", "macros", "debug-print"] }
+#连接池管理
+bb8 = "0.7.1"
+#redis - bb8连接池
+bb8-redis = "0.14.0"
+# redis
+redis = "0.24.0"
 # 为 Rust 应用程序组织分层或分层配置
 config = "0.13"
 # 此库从 .env 文件加载环境变量。

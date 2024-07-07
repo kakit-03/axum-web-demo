@@ -5,6 +5,8 @@ use axum::http::{Request, Response};
 use axum::http::header::CONTENT_TYPE;
 use axum::response::IntoResponse;
 use axum_valid::Valid;
+use bb8_redis::bb8::Pool;
+use bb8_redis::RedisConnectionManager;
 use sea_orm::{Condition, DatabaseConnection, DeriveEntityModel, entity, EntityTrait, Select};
 use serde::de::DeserializeOwned;
 use serde::ser::Error;
@@ -36,6 +38,9 @@ fn log_error(handler_name: &str) -> Box<dyn Fn(AppError) -> AppError> {
 
 fn get_conn<'a>(state: &'a AppState) -> &'a DatabaseConnection {
     &state.conn
+}
+fn get_redis_conn<'a>(state: &'a AppState) -> &'a Pool<RedisConnectionManager>{
+    &state.redis
 }
 
 pub struct JsonOrForm<T>(T);

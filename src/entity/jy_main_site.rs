@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::util::serialize_datetime;
 use chrono::{DateTime,Utc};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Serialize, Deserialize, Eq)]
-#[sea_orm(table_name = "jy_main_site")]
+#[sea_orm(table_name = "main_site")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,

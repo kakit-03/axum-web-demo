@@ -3,7 +3,7 @@
 use sea_orm::entity::prelude::*;
 use chrono::{DateTime,Utc};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "jy_main_store")]
+#[sea_orm(table_name = "main_store")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,

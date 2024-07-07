@@ -13,6 +13,7 @@ pub enum AppErrorType {
     Deserialize,
     FORBIDDEN,
     UNAUTHORIZED,
+    REDISERROR,
 }
 
 type Cause = Box<dyn std::error::Error>;
@@ -81,6 +82,11 @@ impl From<sea_orm::DbErr> for AppError {
 impl From<serde_json::Error> for AppError {
     fn from(err: serde_json::Error) -> Self {
         AppError::from_err(Box::new(err), AppErrorType::Deserialize)
+    }
+}
+impl From<redis::RedisError> for AppError {
+    fn from(err: redis::RedisError) -> Self {
+        AppError::from_err(Box::new(err), AppErrorType::REDISERROR)
     }
 }
 

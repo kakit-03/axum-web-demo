@@ -1,17 +1,12 @@
-use axum::{
-    body::Body
-    ,
-    extract::{Json, Request},
-    http,
-    http::{Response, StatusCode},
-    middleware::Next,
-};
+use std::sync::Arc;
+use axum::{body::Body, Extension, extract::{Json, Request}, http, http::{Response, StatusCode}, middleware::Next};
 use bcrypt::{DEFAULT_COST, hash, verify};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, DecodingKey, encode, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 
 use crate::AppError;
+use crate::state::AppState;
 
 #[derive(Serialize, Deserialize)]
 // Define a structure for holding claims data used in JWT tokens
@@ -114,7 +109,10 @@ pub fn decode_jwt(jwt_token: String) -> Result<TokenData<Claims>, StatusCode> {
 }
 
 
-pub async fn kakit_authorization_middleware(mut req: Request, next: Next) -> Result<Response<Body>, AppError> {
+pub async fn kakit_authorization_middleware(Extension(state): Extension<Arc<AppState>>,mut req: Request, next: Next) -> Result<Response<Body>, AppError> {
+    // let conn = &state.conn;
+    let redis_pool = &state.redis;
+    let mut conn = redis_pool.get().await.unwrap();
     let auth_header = req.headers_mut().get(http::header::AUTHORIZATION);
     let auth_header = match auth_header {
         Some(header) => header.to_str().map_err(|_| AppError::auth_err("Empty header is not allowed"))?,

@@ -10,10 +10,15 @@ pub struct WebConfig {
 pub struct DatabaseConfig {
     pub url: String,
 }
+#[derive(Deserialize, Debug)]
+pub struct RedisConfig {
+    pub url: String,
+}
 
 #[derive(Deserialize, Debug)]
 pub struct Config {
     pub database: DatabaseConfig,
+    pub redis: RedisConfig,
     pub web: WebConfig,
 }
 

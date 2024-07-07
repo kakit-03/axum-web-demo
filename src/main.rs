@@ -9,6 +9,7 @@ use std::{
 };
 use axum::extract::FromRequest;
 use axum::response::Response;
+use bb8_redis::RedisConnectionManager;
 use http::header::CONTENT_TYPE;
 use tower::{Service, ServiceBuilder};
 use gym::{AppError, config, router, state, service::{ApiResponse}};
@@ -31,12 +32,15 @@ async fn main() {
         .with_max_level(tracing::Level::DEBUG)
         .init();
     dotenv().ok();
+    let manager = RedisConnectionManager::new(cfg.redis.url.as_str()).unwrap();
+    let pool = bb8_redis::bb8::Pool::builder().build(manager).await.unwrap();
     let conn = Database::connect(&cfg.database.url).await.unwrap();
     tracing::info!("Web服务监听于{}", &cfg.web.addr);
-    //
-    let app = router::init()
+    let app_state = Arc::new(state::AppState { conn,redis:pool });
+    let extend_app = Extension(app_state);
+    let app = router::init(extend_app.clone())
         .layer(TraceLayer::new_for_http())
-        .layer(Extension(Arc::new(state::AppState { conn })));
+        .layer(extend_app);
 
     let listener = tokio::net::TcpListener::bind(format!("{}:{}", &cfg.web.addr, &cfg.web.port)).await.unwrap();
     axum::serve(listener, app)

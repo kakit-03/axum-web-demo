@@ -4,3 +4,6 @@ pub mod prelude;
 pub mod jy_main_site;
 pub mod sea_orm_active_enums;
 pub mod jy_main_store;
+
+pub mod main_user;
+pub mod main_user_store_relationship;
