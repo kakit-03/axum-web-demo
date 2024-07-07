@@ -1,6 +1,6 @@
 use axum::middleware;
 use axum::response::IntoResponse;
-use axum::routing::{get, post};
+use axum::routing::{any, get, post};
 use axum::http::StatusCode;
 use crate::middleware::auth;
 use crate::{AppError, service};
@@ -13,6 +13,9 @@ pub fn init() -> axum::Router {
         .route("/site/detail/:id", get(service::site::detail))
         .route("/site/edit", post(service::site::update_by_id)).layer(middleware::from_fn(auth::kakit_authorization_middleware))
         .route("/", get(|| async {}))
+        .route("/heartIp", any(service::device::heart))
+        .route("/device/result", any(service::device::get_device_result))
+        .route("/device/qr_code_result", any(service::device::get_qr_code_result))
         .route("/signin", post(auth::sign_in))
         .fallback(handler_404)
     // .route(

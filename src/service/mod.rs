@@ -18,6 +18,7 @@ use crate::vo::site::List;
 
 pub mod site;
 pub mod store;
+pub mod device;
 
 
 type HtmlRespon = Html<String>;

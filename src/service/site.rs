@@ -16,7 +16,8 @@ use crate::dto::store::SiteParams;
 use crate::vo::site::{Detail, List};
 
 use super::{ApiResponse, get_conn, JsonOrForm, ListResponse, log_error, success};
-
+type StoreColumn = crate::entity::jy_main_store::Column;
+type StoreEntity =  crate::entity::jy_main_store::Entity;
 pub async fn index(
     Extension(state): Extension<Arc<AppState>>,
     Query(params): Query<ListParams>,
@@ -53,21 +54,21 @@ pub async fn index(
         .map_err(AppError::from)
         .map_err(log_error(handler_name))?;
     let ids: Vec<i32> = list.iter().map(|item| item.store_id).collect();
-    let condition = Condition::all()
-        .add(crate::entity::jy_main_store::Column::Id.is_in(ids))
-        .add(crate::entity::jy_main_store::Column::IsDeleted.eq(0));
-    let store_list = crate::entity::jy_main_store::Entity::find().filter(condition)
+
+    let store_list = StoreEntity::find().select_only().columns([StoreColumn::Id, StoreColumn::Name]).filter(Condition::all()
+        .add(StoreColumn::Id.is_in(ids.clone()))
+        .add(StoreColumn::IsDeleted.eq(0)))
         .into_model::<crate::vo::store::Detail>()
         .all(conn)
         .await
         .map_err(AppError::from)
         .map_err(log_error(handler_name))?;
-    let store_map = store_list.iter().map(|detail| (detail.id.clone(), detail)).collect::<Vec<_>>();
-    let store_map: HashMap<_, _>  = store_map.into_iter().collect();
+    let store_map = store_list.into_iter().map(|detail| (detail.id.clone(), detail)).collect::<HashMap<_,_>>();
+    // let store_map: HashMap<_, _>  = store_map.into_iter().collect();
     for list_item in &mut list {
         if let Some(detail) = store_map.get(&list_item.store_id) {
             // 赋值部分值给 List
-            list_item.store_name = Option::from((**detail).name.clone());
+            list_item.store_name = Option::from((*detail).name.clone());
         }
     }
     Ok(success(ListResponse {
