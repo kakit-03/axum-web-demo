@@ -2,7 +2,7 @@ use std::fmt::Display;
 use axum::body::HttpBody;
 use axum::extract::FromRequest;
 use axum::Form;
-
+use sea_orm::TransactionError;
 use crate::service::ApiResponse;
 
 #[derive(Debug)]
@@ -76,6 +76,11 @@ impl serde::ser::Error for AppError {
 
 impl From<sea_orm::DbErr> for AppError {
     fn from(err: sea_orm::DbErr) -> Self {
+        Self::from_err(Box::new(err), AppErrorType::Database)
+    }
+}
+impl From<TransactionError<sea_orm::DbErr>> for AppError {
+    fn from(err: TransactionError<sea_orm::DbErr>) -> Self {
         Self::from_err(Box::new(err), AppErrorType::Database)
     }
 }

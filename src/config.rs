@@ -9,6 +9,16 @@ pub struct WebConfig {
 #[derive(Deserialize, Debug)]
 pub struct DatabaseConfig {
     pub url: String,
+    pub port: i32,
+    pub user: String,
+    pub password: String,
+    pub schema: String,
+}
+
+impl DatabaseConfig {
+    pub fn get_link(self)->String{
+        format!("mysql://{}:{}@{}:{}/{}",self.user,self.password,self.url,self.port,self.schema)
+    }
 }
 #[derive(Deserialize, Debug)]
 pub struct RedisConfig {

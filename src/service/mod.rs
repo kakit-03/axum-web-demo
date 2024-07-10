@@ -21,7 +21,7 @@ use crate::vo::site::List;
 pub mod site;
 pub mod store;
 pub mod device;
-
+pub mod user;
 
 type HtmlRespon = Html<String>;
 type RedirectRespon = (StatusCode, HeaderMap, ());

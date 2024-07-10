@@ -34,7 +34,8 @@ async fn main() {
     dotenv().ok();
     let manager = RedisConnectionManager::new(cfg.redis.url.as_str()).unwrap();
     let pool = bb8_redis::bb8::Pool::builder().build(manager).await.unwrap();
-    let conn = Database::connect(&cfg.database.url).await.unwrap();
+    let database_url = cfg.database.get_link();
+    let conn = Database::connect(database_url).await.unwrap();
     tracing::info!("Web服务监听于{}", &cfg.web.addr);
     let app_state = Arc::new(state::AppState { conn,redis:pool });
     let extend_app = Extension(app_state);

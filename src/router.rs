@@ -23,6 +23,7 @@ pub fn init(arc: Extension<Arc<AppState>>) -> axum::Router {
         .route("/device/qr_code_result", any(service::device::get_qr_code_result))
         .route("/signin", post(auth::sign_in))
         .route("/redis_test", any(service::store::redis_test))
+        .route("/user/sign", any(service::user::sign_add))
         .fallback(handler_404)
     // .route(
     //     "/category/add",

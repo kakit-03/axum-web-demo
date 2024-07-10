@@ -73,3 +73,16 @@ create table main_user
     updated_at    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新日期'
 )
     comment '用户表' charset = utf8;
+
+    create table user_sign_record
+(
+    id          int auto_increment comment 'ID'
+        primary key,
+    store_id    int                                not null comment '店铺ID',
+    user_id    int                                not null comment '店铺ID',
+    sign_time  datetime default CURRENT_TIMESTAMP not null comment '创建日期',
+    status      tinyint  default 1                 not null comment '状态:1启用,0:禁用',
+    is_delete   tinyint  default 0                 not null comment '是否删除:0=未删除,1=删除 ',
+    created_at  datetime default CURRENT_TIMESTAMP not null comment '创建日期',
+    updated_at  datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新日期'
+)comment '签到记录表' charset = utf8mb3;

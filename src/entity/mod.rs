@@ -7,3 +7,4 @@ pub mod jy_main_store;
 
 pub mod main_user;
 pub mod main_user_store_relationship;
+pub mod user_sign_record;

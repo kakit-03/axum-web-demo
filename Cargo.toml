@@ -42,4 +42,5 @@ http = "1.1.0"
 jsonwebtoken = "9.3.0"
 # BCrypt 密码哈希函数
 bcrypt = "0.15.1"
-
+# mqtt客户端
+paho-mqtt = { version = "0.12.5" }

@@ -1,5 +1,10 @@
 [database]
-url = "mysql://root:123456@192.168.2.142:23309/gym"
+#url = "mysql://root:123456@192.168.2.142:23309/gym"
+url = "192.168.2.142"
+port = 23309
+user = "root"
+password = "123456"
+schema = "gym"
 [redis]
 url = "redis://192.168.2.142:16379/"
 [web]
