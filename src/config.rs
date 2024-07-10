@@ -26,10 +26,18 @@ pub struct RedisConfig {
 }
 
 #[derive(Deserialize, Debug)]
+pub struct MqttConfig {
+    pub url: String,
+    pub qos: i32,
+    pub name: String,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct Config {
     pub database: DatabaseConfig,
     pub redis: RedisConfig,
     pub web: WebConfig,
+    pub mqtt: MqttConfig,
 }
 
 impl Config {

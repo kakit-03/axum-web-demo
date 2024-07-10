@@ -7,6 +7,7 @@ use axum::response::IntoResponse;
 use axum_valid::Valid;
 use bb8_redis::bb8::Pool;
 use bb8_redis::RedisConnectionManager;
+use paho_mqtt::Client;
 use sea_orm::{Condition, DatabaseConnection, DeriveEntityModel, entity, EntityTrait, Select};
 use serde::de::DeserializeOwned;
 use serde::ser::Error;
@@ -22,6 +23,7 @@ pub mod site;
 pub mod store;
 pub mod device;
 pub mod user;
+pub mod mqtt;
 
 type HtmlRespon = Html<String>;
 type RedirectRespon = (StatusCode, HeaderMap, ());
@@ -41,6 +43,9 @@ fn get_conn<'a>(state: &'a AppState) -> &'a DatabaseConnection {
 }
 fn get_redis_conn<'a>(state: &'a AppState) -> &'a Pool<RedisConnectionManager>{
     &state.redis
+}
+fn get_mqtt_client<'a>(state: &'a AppState) -> &'a Client{
+    &state.mqtt
 }
 
 pub struct JsonOrForm<T>(T);

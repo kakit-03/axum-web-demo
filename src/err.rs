@@ -13,7 +13,8 @@ pub enum AppErrorType {
     Deserialize,
     FORBIDDEN,
     UNAUTHORIZED,
-    REDISERROR,
+    RedisError,
+    MqttError,
 }
 
 type Cause = Box<dyn std::error::Error>;
@@ -91,7 +92,12 @@ impl From<serde_json::Error> for AppError {
 }
 impl From<redis::RedisError> for AppError {
     fn from(err: redis::RedisError) -> Self {
-        AppError::from_err(Box::new(err), AppErrorType::REDISERROR)
+        AppError::from_err(Box::new(err), AppErrorType::RedisError)
+    }
+}
+impl From<paho_mqtt::Error> for AppError {
+    fn from(err: paho_mqtt::Error) -> Self {
+        AppError::from_err(Box::new(err), AppErrorType::MqttError)
     }
 }
 

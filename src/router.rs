@@ -24,6 +24,7 @@ pub fn init(arc: Extension<Arc<AppState>>) -> axum::Router {
         .route("/signin", post(auth::sign_in))
         .route("/redis_test", any(service::store::redis_test))
         .route("/user/sign", any(service::user::sign_add))
+        .route("/mqtt/test", any(service::mqtt::test))
         .fallback(handler_404)
     // .route(
     //     "/category/add",

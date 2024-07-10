@@ -10,3 +10,7 @@ url = "redis://192.168.2.142:16379/"
 [web]
 addr = "0.0.0.0"
 port = 3030
+[mqtt]
+url = "tcp://localhost:1883"
+name = "rust_publish"
+qos = 1
