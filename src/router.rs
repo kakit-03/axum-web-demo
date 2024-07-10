@@ -26,23 +26,6 @@ pub fn init(arc: Extension<Arc<AppState>>) -> axum::Router {
         .route("/user/sign", any(service::user::sign_add))
         .route("/mqtt/test", any(service::mqtt::test))
         .fallback(handler_404)
-    // .route(
-    //     "/category/add",
-    //     get(handler::category::add_ui).post(handler::category::add),
-    // )
-    // .route(
-    //     "/category/edit/:id",
-    //     get(handler::category::edit_ui).post(handler::category::edit),
-    // )
-    // .route("/category/del/:id", get(handler::category::del))
-    // .route("/category/del/:id/:real", get(handler::category::del))
-    // .route("/category/articles/:id", get(handler::category::articles))
-    // .route("/article", get(handler::site::index))
-    // .route(
-    //     "/article/add",
-    //     get(handler::site::add_ui).post(handler::site::add),
-    // )
-    // .route("/article/tags", get(handler::site::list_with_tags))
 }
 
 async fn handler_404() -> impl IntoResponse {
