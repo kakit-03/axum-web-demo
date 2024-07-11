@@ -15,6 +15,7 @@ use serde_json::map::Values;
 use tower_http::trace::TraceLayer;
 use paho_mqtt;
 use tracing::trace;
+use gym::state::AppState;
 
 #[derive(Debug, Default, serde_derive::Deserialize, PartialEq, Eq)]
 struct AppConfig {
@@ -28,33 +29,9 @@ async fn main() {
         .with_max_level(tracing::Level::DEBUG)
         .init();
     dotenv().ok();
-    //mqtt start
-    //mqtt config
-    let create_opts = paho_mqtt::CreateOptionsBuilder::new()
-        .server_uri(cfg.mqtt.url)
-        .client_id(cfg.mqtt.name)
-        .finalize();
-    // Create a client.
-    let cli = paho_mqtt::Client::new(create_opts).unwrap_or_else(|err| {
-        println!("Error creating the client: {:?}", err);
-        process::exit(1);
-    });
-    // Define the set of options for the connection.
-    let conn_opts = paho_mqtt::ConnectOptionsBuilder::new()
-        .keep_alive_interval(Duration::from_secs(20))
-        .clean_session(true)
-        .finalize();
-    // Connect and wait for it to complete or fail.
-    if let Err(e) = cli.connect(conn_opts) {
-        tracing::error!("{}: {:?}", "mqtt_connect", e.to_string());
-    }
-    let manager = RedisConnectionManager::new(cfg.redis.url.as_str()).unwrap();
-    let pool = bb8_redis::bb8::Pool::builder().build(manager).await.unwrap();
-    let database_url = cfg.database.get_link();
-    let conn = Database::connect(database_url).await.unwrap();
     tracing::info!("Web服务监听于{}", &cfg.web.addr);
-    let app_state = Arc::new(state::AppState { conn, redis: pool,mqtt:cli });
-    let extend_app = Extension(app_state);
+    let app_state = AppState::get_state().await;
+    let extend_app = Extension(Arc::new(app_state));
     let app = router::init(extend_app.clone())
         .layer(TraceLayer::new_for_http())
         .layer(extend_app);
