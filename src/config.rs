@@ -31,13 +31,24 @@ pub struct MqttConfig {
     pub qos: i32,
     pub name: String,
 }
+#[derive(Deserialize, Debug)]
+pub struct LogConfig {
+    pub path: String
+}
+#[derive(Deserialize, Debug)]
+pub struct AppConfig {
+    pub debug: bool,
+    pub env:String
+}
 
 #[derive(Deserialize, Debug)]
 pub struct Config {
+    pub app: AppConfig,
     pub database: DatabaseConfig,
     pub redis: RedisConfig,
     pub web: WebConfig,
     pub mqtt: MqttConfig,
+    pub log:LogConfig,
 }
 
 impl Config {

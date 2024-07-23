@@ -14,3 +14,9 @@ port = 3030
 url = "tcp://localhost:1883"
 name = "rust_publish"
 qos = 1
+[log]
+path = "logs"
+[app]
+debug = true
+#env = "dev"
+env = "product"

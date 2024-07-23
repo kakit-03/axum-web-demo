@@ -5,16 +5,17 @@ use std::{env, sync::Arc, collections::HashMap, time::Duration, process};
 use axum::extract::FromRequest;
 use axum::response::Response;
 use bb8_redis::RedisConnectionManager;
+use chrono::{DateTime, Local};
 use http::header::CONTENT_TYPE;
 use tower::{Service, ServiceBuilder};
-use gym::{AppError, config, router, state, service::{ApiResponse}};
+use gym::{AppError, config, router, state, service::{ApiResponse}, init};
 use gym::err::{AppErrorItem};
 use hyper::body;
 use serde_json::{json, Value};
 use serde_json::map::Values;
 use tower_http::trace::TraceLayer;
 use paho_mqtt;
-use tracing::trace;
+use tracing::{Level, trace};
 use gym::state::AppState;
 
 #[derive(Debug, Default, serde_derive::Deserialize, PartialEq, Eq)]
@@ -25,9 +26,7 @@ struct AppConfig {
 #[tokio::main]
 async fn main() {
     let cfg = config::Config::from_env().unwrap();
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
-        .init();
+    let gurad = crate::init(&cfg);
     dotenv().ok();
     tracing::info!("Web服务监听于{}", &cfg.web.addr);
     let app_state = AppState::get_state().await;
