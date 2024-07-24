@@ -8,7 +8,7 @@ use bb8_redis::RedisConnectionManager;
 use chrono::{DateTime, Local};
 use http::header::CONTENT_TYPE;
 use tower::{Service, ServiceBuilder};
-use gym::{AppError, config, router, state, service::{ApiResponse}, init};
+use gym::{AppError, config, router, state, service::{ApiResponse}};
 use gym::err::{AppErrorItem};
 use hyper::body;
 use serde_json::{json, Value};
@@ -26,10 +26,10 @@ struct AppConfig {
 #[tokio::main]
 async fn main() {
     let cfg = config::Config::from_env().unwrap();
-    let gurad = crate::init(&cfg);
+    let gurad = gym::log::init(&cfg);
     dotenv().ok();
     tracing::info!("Web服务监听于{}", &cfg.web.addr);
-    let app_state = AppState::get_state().await;
+    let app_state = AppState::get_state(&cfg).await;
     let extend_app = Extension(Arc::new(app_state));
     let app = router::init(extend_app.clone())
         .layer(TraceLayer::new_for_http())

@@ -16,8 +16,8 @@ pub struct DatabaseConfig {
 }
 
 impl DatabaseConfig {
-    pub fn get_link(self)->String{
-        format!("mysql://{}:{}@{}:{}/{}",self.user,self.password,self.url,self.port,self.schema)
+    pub fn get_link(&self)->String{
+        format!("mysql://{}:{}@{}:{}/{}",&self.user,&self.password,&self.url,&self.port,&self.schema)
     }
 }
 #[derive(Deserialize, Debug)]

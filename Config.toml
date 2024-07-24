@@ -17,6 +17,6 @@ qos = 1
 [log]
 path = "logs"
 [app]
-debug = true
+debug = false
 #env = "dev"
 env = "product"
