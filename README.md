@@ -48,10 +48,12 @@ jsonwebtoken = "9.3.0"
 bcrypt = "0.15.1"
 # mqtt客户端
 paho-mqtt = { version = "0.12.5" }
-
+````
 ## UNFINISHED
+
 1. login valida by database data ` login function valida account & password is writed at middleware/auth.rs`
 > to impl jwt, let's read this blog https://blog.logrocket.com/using-rust-axum-build-jwt-authentication-api/
+
 2. full err handler
 > no idea 
 3. dto,service&route generator cli
