@@ -26,6 +26,7 @@ pub struct Detail {
     pub merchant_id: i32,
     pub store_id: i32,
     pub name: String,
+    pub store_name: String,
     pub images: Option<Json>,
     pub rc_config: Option<Json>,
     pub status: i8,

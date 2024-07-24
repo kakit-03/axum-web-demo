@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use axum::{Extension, extract::Query, Json};
 use axum::extract::Path;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, EntityTrait, NotSet, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, EntityTrait, JoinType, NotSet, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect};
 use sea_orm::ActiveValue::Set;
 
 use crate::{
@@ -94,6 +94,8 @@ pub async fn detail(
     let handler_name = "site/detail";
     let conn = get_conn(&state);
     let site_vo = JyMainSite::Entity::find_by_id(id)
+        .column_as(StoreColumn::Name,"store_name")
+        .join_rev(JoinType::LeftJoin,StoreEntity::belongs_to(JyMainSite::Entity).from(StoreColumn::Id).to(JyMainSite::Column::StoreId).into())
         .into_model::<Detail>()
         .one(conn)
         .await.map_err(AppError::from)
