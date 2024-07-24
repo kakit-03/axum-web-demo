@@ -20,7 +20,7 @@ pub struct List {
     #[serde(serialize_with = "serialize_datetime")]
     pub updated_at: DateTime<Utc>,
 }
-#[derive(Clone, Debug, Serialize,FromQueryResult)]
+#[derive(Clone, Debug,PartialEq, Serialize,FromQueryResult)]
 pub struct Detail {
     pub id: i32,
     pub merchant_id: i32,
